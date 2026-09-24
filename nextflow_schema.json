@@ -219,6 +219,13 @@
                     "description": "Number of samples per chunk when batching DNAM per-dataset operations (used to collate sample files).",
                     "fa_icon": "fas fa-th-large"
                 },
+                "dnam_impute_rows_per_chunk": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 10000,
+                    "description": "Number of DNAM rows to impute at a time to limit peak memory usage.",
+                    "fa_icon": "fas fa-th-large"
+                },
                 "dnam_variance_keep_top_sites": {
                     "type": ["integer", "null"],
                     "default": null,

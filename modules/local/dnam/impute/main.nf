@@ -1,12 +1,13 @@
 process IMPUTE {
     tag "impute"
-    label 'process_high'
+    label 'process_medium'
 
     conda "${moduleDir}/environment.yml"
     container "python:3.11-slim"
 
     input:
     tuple val(dataset_name), val(sample_name), path(beta_matrix)
+    val rows_per_chunk
 
     output:
     tuple val(dataset_name), val(sample_name), path("${dataset_name}__${sample_name}.imputed_betas.csv"), emit: imputed_betas
@@ -25,14 +26,17 @@ process IMPUTE {
     import sklearn
     import sys
 
-    beta_matrix = pd.read_csv("${beta_matrix}", index_col=0)
-    beta_matrix = beta_matrix.apply(pd.to_numeric, errors='coerce').replace([np.inf, -np.inf], np.nan)
+    output_file = "${dataset_name}__${sample_name}.imputed_betas.csv"
+    first_chunk = True
+    for beta_chunk in pd.read_csv("${beta_matrix}", index_col=0, chunksize=int(${rows_per_chunk})):
+        beta_chunk = beta_chunk.apply(pd.to_numeric, errors='coerce').replace([np.inf, -np.inf], np.nan)
 
-    # Median imputation (more robust to outliers)
-    imp = SimpleImputer(strategy='median')
-    beta_imputed = imp.fit_transform(beta_matrix)
-    beta_imputed = pd.DataFrame(beta_imputed, index=beta_matrix.index, columns=beta_matrix.columns)
-    beta_imputed.to_csv("${dataset_name}__${sample_name}.imputed_betas.csv")
+        # Median imputation (more robust to outliers). Fit per row chunk to keep peak memory bounded.
+        imp = SimpleImputer(strategy='median')
+        beta_imputed = imp.fit_transform(beta_chunk)
+        beta_imputed = pd.DataFrame(beta_imputed, index=beta_chunk.index, columns=beta_chunk.columns)
+        beta_imputed.to_csv(output_file, mode='w' if first_chunk else 'a', header=first_chunk)
+        first_chunk = False
 
     with open("versions.yml", "w") as f:
         f.write('"${task.process}":\\n')

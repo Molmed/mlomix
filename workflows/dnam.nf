@@ -228,7 +228,8 @@ workflow DNAM {
     }
 
     IMPUTE (
-        ch_variance_input_betas
+        ch_variance_input_betas,
+        params.dnam_impute_rows_per_chunk
     )
     ch_versions = ch_versions.mix(IMPUTE.out.versions)
 
