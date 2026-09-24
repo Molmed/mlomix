@@ -38,8 +38,9 @@ workflow DNAM {
     ch_versions = channel.empty()
     ch_visuals = channel.empty()
     ch_dnam_probe_list = channel.value(file(params.dnam_probes_file ?: params.common_probes, checkIfExists: true))
-    def skip_missing_filter = (params.dnam_probes_file != null) || params.dnam_skip_filter_by_missing
-    def skip_variance_filter = (params.dnam_probes_file != null) || params.dnam_skip_filter_by_variance
+    def classifier_configured = (params.classifier_name != null) && (params.classifier_version != null)
+    def skip_missing_filter = (params.dnam_probes_file != null) || params.dnam_skip_filter_by_missing || classifier_configured
+    def skip_variance_filter = (params.dnam_probes_file != null) || params.dnam_skip_filter_by_variance || classifier_configured
 
     //
     // Build per-sample DNAm channels from precomputed inputs
