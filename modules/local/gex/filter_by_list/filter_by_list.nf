@@ -10,7 +10,7 @@ process FILTER_BY_LIST {
     input:
     val dataset_name
     path data_path
-    val genes_path
+    path genes_path
 
     output:
     path "${dataset_name}.filtered_by_list.csv", emit: filtered_by_list_csv

@@ -29,6 +29,7 @@ workflow MLOMIX {
     ch_dnam_samplesheet
     ch_dnam_beta_matrix
     ch_dnam_pvals
+    classifier_config
     genome
     annotation_version
     random_seed
@@ -90,6 +91,7 @@ workflow MLOMIX {
         ch_batches_gated,
         ch_classes_gated,
         GEX_REF_PREPROCESSOR.out.filtered_annotations,
+        classifier_config.gex_genes_file,
         ch_random_seed_gated
     )
 
@@ -114,7 +116,8 @@ workflow MLOMIX {
         random_seed,
         ch_dnam_beta_matrix,
         ch_dnam_pvals,
-        ch_use_precomputed_dnam_gated
+        ch_use_precomputed_dnam_gated,
+        classifier_config.dnam_probes_file
     )
     ch_versions = ch_versions.mix(DNAM.out.versions)
     ch_dnam_transposed = DNAM.out.transposed_csv.ifEmpty(file("${params.outdir}/.dnam_placeholder"))

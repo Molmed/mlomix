@@ -43,6 +43,7 @@ workflow GEX {
     ch_batches            // channel: batch file information
     ch_classes            // channel: classes from samplesheet metadata
     ch_annotations        // channel: gene annotations from the GEX_REF_PREPROCESSOR subworkflow
+    gex_genes_file        // classifier-selected GEX feature list, or null
     random_seed           //  int: Random seed for reproducibility
 
     main:
@@ -188,11 +189,11 @@ workflow GEX {
 
     def gex_processed_matrix
 
-    if (params.gex_genes_file) {
+    if (gex_genes_file) {
         FILTER_BY_LIST (
             "merged_datasets",
             NORMALIZE.out.normalized_csv,
-            params.gex_genes_file
+            gex_genes_file
         )
         ch_versions = ch_versions.mix(FILTER_BY_LIST.out.versions)
         gex_processed_matrix = FILTER_BY_LIST.out.filtered_by_list_csv.map { f -> [ 'merged_datasets', 'merged_datasets', f ] }

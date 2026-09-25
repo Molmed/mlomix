@@ -56,6 +56,7 @@ workflow NFCORE_MLOMIX {
     ch_dnam_samplesheet
     ch_dnam_beta_matrix
     ch_dnam_pvals
+    classifier_config
     genome
     annotation_version
     random_seed
@@ -81,6 +82,7 @@ workflow NFCORE_MLOMIX {
         ch_dnam_samplesheet,
         ch_dnam_beta_matrix,
         ch_dnam_pvals,
+        classifier_config,
         genome,
         annotation_version,
         random_seed,
@@ -144,6 +146,7 @@ workflow {
         PIPELINE_INITIALISATION.out.dnam_samplesheet,
         PIPELINE_INITIALISATION.out.dnam_beta_matrix,
         PIPELINE_INITIALISATION.out.dnam_pvals,
+        classifier_config,
         PIPELINE_INITIALISATION.out.genome,
         PIPELINE_INITIALISATION.out.annotation_version,
         params.random_seed,

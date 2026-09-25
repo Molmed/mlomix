@@ -39,7 +39,9 @@ def resolveClassifierConfig() {
         return [
             genome: params.genome,
             annotation_version: params.annotation_version ?: 109,
+            gex_genes_file: params.gex_genes_file,
             gex_norm_factors_file: params.gex_norm_factors_file,
+            dnam_probes_file: params.dnam_probes_file,
             dnam_classes_file: params.dnam_classes_file,
             class_colors_file: params.class_colors_file,
         ]
@@ -82,12 +84,20 @@ def resolveClassifierConfig() {
     def resolved = [
         genome: params.genome ?: manifest['genome'],
         annotation_version: params.annotation_version ?: manifest['annotation_version'] ?: 109,
+        gex_genes_file: params.gex_genes_file,
         gex_norm_factors_file: params.gex_norm_factors_file,
+        dnam_probes_file: params.dnam_probes_file,
         dnam_classes_file: params.dnam_classes_file,
         class_colors_file: params.class_colors_file,
     ]
+    if (!resolved.gex_genes_file) {
+        resolved.gex_genes_file = resolveClassifierConfigFile(manifest, configDir, 'gex_genes_file')
+    }
     if (!resolved.gex_norm_factors_file) {
         resolved.gex_norm_factors_file = resolveClassifierConfigFile(manifest, configDir, 'gex_norm_factors_file')
+    }
+    if (!resolved.dnam_probes_file) {
+        resolved.dnam_probes_file = resolveClassifierConfigFile(manifest, configDir, 'dnam_probes_file')
     }
     if (!resolved.dnam_classes_file) {
         resolved.dnam_classes_file = resolveClassifierConfigFile(manifest, configDir, 'dnam_classes_file')
