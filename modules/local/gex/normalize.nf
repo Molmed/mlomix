@@ -9,6 +9,7 @@ process NORMALIZE {
     input:
     path merged_data_path
     path ref_path
+    val gex_norm_factors_file
 
     output:
     path "normalized.csv", emit: normalized_csv
@@ -19,7 +20,7 @@ process NORMALIZE {
     task.ext.when == null || task.ext.when
 
     script:
-    def norm_factors_file = params.gex_norm_factors_file ?: ''
+    def norm_factors_file = gex_norm_factors_file ?: ''
 
     """
     #!/usr/bin/env Rscript

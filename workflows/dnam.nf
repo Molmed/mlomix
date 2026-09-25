@@ -33,6 +33,7 @@ workflow DNAM {
     _ch_precomputed_pvals
     _ch_use_precomputed_dnam
     dnam_probes_file
+    class_colors_file
 
     main:
 
@@ -242,7 +243,7 @@ workflow DNAM {
             ch_imputed_betas.map { _dataset_name, _sample_name, betas -> betas },
             ch_classes,
             false,
-            params.class_colors_file ?: '',
+            class_colors_file ?: '',
             random_seed
         )
         ch_versions = ch_versions.mix(TSNE_DNAM_BY_CLASS.out.versions)
@@ -254,7 +255,7 @@ workflow DNAM {
             ch_imputed_betas.map { _dataset_name, _sample_name, betas -> betas },
             ch_classes,
             false,
-            params.class_colors_file ?: '',
+            class_colors_file ?: '',
             random_seed
         )
         ch_versions = ch_versions.mix(UMAP_DNAM_BY_CLASS.out.versions)

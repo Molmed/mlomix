@@ -193,7 +193,11 @@ workflow PIPELINE_INITIALISATION {
     // Shared class report (filter + report), generated once before any workflow branching
     //
     ch_samplesheet_report = channel.fromPath(params.input, checkIfExists: true)
-    CLASS_FILTER_AND_REPORT(ch_samplesheet_report)
+    CLASS_FILTER_AND_REPORT(
+        ch_samplesheet_report,
+        classifier_config.gex_classes_file ?: '',
+        classifier_config.dnam_classes_file ?: ''
+    )
     ch_versions = ch_versions.mix(CLASS_FILTER_AND_REPORT.out.versions)
     ch_class_plot_gex_filtered = CLASS_FILTER_AND_REPORT.out.class_plot_gex_filtered
     ch_class_plot_dnam_filtered = CLASS_FILTER_AND_REPORT.out.class_plot_dnam_filtered

@@ -8,6 +8,8 @@ process CLASS_FILTER_AND_REPORT {
 
     input:
     path samplesheet
+    val gex_classes_file
+    val dnam_classes_file
 
     output:
     path "class_distribution.gex.all.svg"     , emit: class_plot_gex_all
@@ -25,9 +27,8 @@ process CLASS_FILTER_AND_REPORT {
     task.ext.when == null || task.ext.when
 
     script:
-    def gex_class_file = params.gex_class_file ?: params.gex_classes_file
-    def gex_class_file_arg = gex_class_file ? "--gex-classes-file ${gex_class_file}" : ""
-    def dnam_classes_file_arg = params.dnam_classes_file ? "--dnam-classes-file ${params.dnam_classes_file}" : ""
+    def gex_class_file_arg = gex_classes_file ? "--gex-classes-file ${gex_classes_file}" : ""
+    def dnam_classes_file_arg = dnam_classes_file ? "--dnam-classes-file ${dnam_classes_file}" : ""
     def gex_min_arg = params.gex_min_samples_per_class != null ? "--gex-min ${params.gex_min_samples_per_class}" : ""
     def dnam_min_arg = params.dnam_min_samples_per_class != null ? "--dnam-min ${params.dnam_min_samples_per_class}" : ""
     """

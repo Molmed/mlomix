@@ -44,6 +44,8 @@ workflow GEX {
     ch_classes            // channel: classes from samplesheet metadata
     ch_annotations        // channel: gene annotations from the GEX_REF_PREPROCESSOR subworkflow
     gex_genes_file        // classifier-selected GEX feature list, or null
+    gex_norm_factors_file  // classifier-trained normalization factors, or null
+    class_colors_file      // classifier class colors, or null
     random_seed           //  int: Random seed for reproducibility
 
     main:
@@ -79,7 +81,7 @@ workflow GEX {
                 MERGE_DATASETS.out.merged_csv,
                 ch_batches,
                 false,
-                params.class_colors_file ?: '',
+                class_colors_file ?: '',
                 random_seed
             )
             ch_versions = ch_versions.mix(TSNE_GEX_RAW_BY_BATCH.out.versions)
@@ -90,7 +92,7 @@ workflow GEX {
                 MERGE_DATASETS.out.merged_csv,
                 ch_classes,
                 false,
-                params.class_colors_file ?: '',
+                class_colors_file ?: '',
                 random_seed
             )
             ch_versions = ch_versions.mix(TSNE_GEX_RAW_BY_CLASS.out.versions)
@@ -102,7 +104,7 @@ workflow GEX {
                 MERGE_DATASETS.out.merged_csv,
                 ch_batches,
                 false,
-                params.class_colors_file ?: '',
+                class_colors_file ?: '',
                 random_seed
             )
             ch_versions = ch_versions.mix(UMAP_GEX_RAW_BY_BATCH.out.versions)
@@ -113,7 +115,7 @@ workflow GEX {
                 MERGE_DATASETS.out.merged_csv,
                 ch_classes,
                 false,
-                params.class_colors_file ?: '',
+                class_colors_file ?: '',
                 random_seed
             )
             ch_versions = ch_versions.mix(UMAP_GEX_RAW_BY_CLASS.out.versions)
@@ -137,7 +139,7 @@ workflow GEX {
                     BATCH_CORRECT.out.batch_corrected_csv,
                     ch_batches,
                     false,
-                    params.class_colors_file ?: '',
+                    class_colors_file ?: '',
                     random_seed
                 )
                 ch_versions = ch_versions.mix(TSNE_GEX_BC_BY_BATCH.out.versions)
@@ -148,7 +150,7 @@ workflow GEX {
                     BATCH_CORRECT.out.batch_corrected_csv,
                     ch_classes,
                     false,
-                    params.class_colors_file ?: '',
+                    class_colors_file ?: '',
                     random_seed
                 )
                 ch_versions = ch_versions.mix(TSNE_GEX_BC_BY_CLASS.out.versions)
@@ -160,7 +162,7 @@ workflow GEX {
                     BATCH_CORRECT.out.batch_corrected_csv,
                     ch_batches,
                     false,
-                    params.class_colors_file ?: '',
+                    class_colors_file ?: '',
                     random_seed
                 )
                 ch_versions = ch_versions.mix(UMAP_GEX_BC_BY_BATCH.out.versions)
@@ -171,7 +173,7 @@ workflow GEX {
                     BATCH_CORRECT.out.batch_corrected_csv,
                     ch_classes,
                     false,
-                    params.class_colors_file ?: '',
+                    class_colors_file ?: '',
                     random_seed
                 )
                 ch_versions = ch_versions.mix(UMAP_GEX_BC_BY_CLASS.out.versions)
@@ -182,7 +184,8 @@ workflow GEX {
 
     NORMALIZE (
         gex_matrix_for_normalization,
-        ch_annotations
+        ch_annotations,
+        gex_norm_factors_file
     )
     ch_versions = ch_versions.mix(NORMALIZE.out.versions)
     ch_norm_factors = NORMALIZE.out.norm_factors_rds
@@ -209,7 +212,7 @@ workflow GEX {
                 NORMALIZE.out.normalized_csv,
                 ch_batches,
                 false,
-                params.class_colors_file ?: '',
+                class_colors_file ?: '',
                 random_seed
             )
             ch_versions = ch_versions.mix(TSNE_GEX_NORM_BY_BATCH.out.versions)
@@ -220,7 +223,7 @@ workflow GEX {
                 NORMALIZE.out.normalized_csv,
                 ch_classes,
                 false,
-                params.class_colors_file ?: '',
+                class_colors_file ?: '',
                 random_seed
             )
             ch_versions = ch_versions.mix(TSNE_GEX_NORM_BY_CLASS.out.versions)
@@ -232,7 +235,7 @@ workflow GEX {
                 NORMALIZE.out.normalized_csv,
                 ch_batches,
                 false,
-                params.class_colors_file ?: '',
+                class_colors_file ?: '',
                 random_seed
             )
             ch_versions = ch_versions.mix(UMAP_GEX_NORM_BY_BATCH.out.versions)
@@ -243,7 +246,7 @@ workflow GEX {
                 NORMALIZE.out.normalized_csv,
                 ch_classes,
                 false,
-                params.class_colors_file ?: '',
+                class_colors_file ?: '',
                 random_seed
             )
             ch_versions = ch_versions.mix(UMAP_GEX_NORM_BY_CLASS.out.versions)
@@ -257,7 +260,7 @@ workflow GEX {
             gex_processed_matrix.map { _dataset_name, _sample_name, f -> f },
             ch_batches,
             false,
-            params.class_colors_file ?: '',
+            class_colors_file ?: '',
             random_seed
         )
         ch_versions = ch_versions.mix(TSNE_GEX_PROCESSED_BY_BATCH.out.versions)
@@ -268,7 +271,7 @@ workflow GEX {
             gex_processed_matrix.map { _dataset_name, _sample_name, f -> f },
             ch_classes,
             false,
-            params.class_colors_file ?: '',
+            class_colors_file ?: '',
             random_seed
         )
         ch_versions = ch_versions.mix(TSNE_GEX_PROCESSED_BY_CLASS.out.versions)
@@ -280,7 +283,7 @@ workflow GEX {
             gex_processed_matrix.map { _dataset_name, _sample_name, f -> f },
             ch_batches,
             false,
-            params.class_colors_file ?: '',
+            class_colors_file ?: '',
             random_seed
         )
         ch_versions = ch_versions.mix(UMAP_GEX_PROCESSED_BY_BATCH.out.versions)
@@ -291,7 +294,7 @@ workflow GEX {
             gex_processed_matrix.map { _dataset_name, _sample_name, f -> f },
             ch_classes,
             false,
-            params.class_colors_file ?: '',
+            class_colors_file ?: '',
             random_seed
         )
         ch_versions = ch_versions.mix(UMAP_GEX_PROCESSED_BY_CLASS.out.versions)

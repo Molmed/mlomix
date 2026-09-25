@@ -92,6 +92,8 @@ workflow MLOMIX {
         ch_classes_gated,
         GEX_REF_PREPROCESSOR.out.filtered_annotations,
         classifier_config.gex_genes_file,
+        classifier_config.gex_norm_factors_file ?: '',
+        classifier_config.class_colors_file ?: '',
         ch_random_seed_gated
     )
 
@@ -117,7 +119,8 @@ workflow MLOMIX {
         ch_dnam_beta_matrix,
         ch_dnam_pvals,
         ch_use_precomputed_dnam_gated,
-        classifier_config.dnam_probes_file
+        classifier_config.dnam_probes_file,
+        classifier_config.class_colors_file ?: ''
     )
     ch_versions = ch_versions.mix(DNAM.out.versions)
     ch_dnam_transposed = DNAM.out.transposed_csv.ifEmpty(file("${params.outdir}/.dnam_placeholder"))
