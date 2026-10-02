@@ -1,6 +1,6 @@
 <h1>
   <picture>
-    <img alt="mlomix" width="75%" src="docs/images/mlomix_logo_clear_bg.png">
+    <img alt="mlomix" width="50%" src="docs/images/mlomix_logo_clear_bg.png">
   </picture>
 </h1>
 
