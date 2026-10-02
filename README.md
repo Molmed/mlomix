@@ -1,8 +1,9 @@
-<h1>
-  <picture>
+
+<picture style="text-align: center">
+  <p align="center">
     <img alt="mlomix" width="50%" src="docs/images/mlomix_logo_clear_bg.png">
-  </picture>
-</h1>
+  </p>
+</picture>
 
 ## Introduction
 
