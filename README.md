@@ -1,6 +1,6 @@
 
-<picture style="text-align: center">
-  <p align="center">
+<picture>
+  <p>
     <img alt="mlomix" width="40%" src="docs/images/mlomix_logo_clear_bg.png">
   </p>
 </picture>
