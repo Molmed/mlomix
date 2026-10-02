@@ -1,7 +1,7 @@
 
 <picture style="text-align: center">
   <p align="center">
-    <img alt="mlomix" width="50%" src="docs/images/mlomix_logo_clear_bg.png">
+    <img alt="mlomix" style="max-width: 40%" src="docs/images/mlomix_logo_clear_bg.png">
   </p>
 </picture>
 
