@@ -6,7 +6,7 @@
 
 ## Introduction
 
-**mlomix** is a bioinformatics that accepts gene expression feature counts and/or DNA methylation data (beta matrices or raw IDAT files) together with the corresponding classes for each sample, and processes the data for machine learning classification for e.g. cancers.
+**mlomix** is a bioinformatics pipeline that accepts gene expression feature counts and/or DNA methylation data (beta matrices or raw IDAT files) together with the corresponding classes for each sample, and processes the data for machine learning classification for e.g. cancers.
 
 It comes bundled with configs for pre-processing inference data for classification using PALLAS10k (Pan Acute Leukemia Learning and Subtyping), a multi-modal classifier used to predict subtypes of pediatric acute lymphoblastic leukemia (ALL) and acute myeloid leukemia (AML).
 
@@ -94,5 +94,3 @@ This pipeline uses code and infrastructure developed and maintained by the [nf-c
 > Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
 >
 > Nat Biotechnol. 2020 Feb 13. doi: 10.1038/s41587-020-0439-x.
-
-In addition, references of tools and data used in this pipeline are as follows:
