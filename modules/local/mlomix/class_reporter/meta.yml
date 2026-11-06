@@ -1,5 +1,5 @@
 name: "class_filter_and_report"
-description: Filter samples by minimum class counts per modality and generate before/after reports
+description: Filter samples by minimum class counts per modality and generate reports; classifier runs retain all samples
 keywords:
   - samplesheet
   - class
