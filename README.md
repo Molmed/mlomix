@@ -36,13 +36,13 @@ Full documentation on the samplesheet columns is [here](docs/samplesheet.md).
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
 
-Now, you can run the pipeline using:
+Now, from your mlomix directory, you can run the pipeline using:
 
 <!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
-nextflow run mlomix \
-   -profile <local/docker/singularity/.../institute> \
+nextflow run . \
+   -profile local,conda \
    --input samplesheet.csv \
    --outdir <OUTDIR>
 ```
@@ -50,8 +50,8 @@ nextflow run mlomix \
 To pre-process data for inference using the PALLAS classifier, run:
 
 ```bash
-nextflow run mlomix \
-   -profile <local/docker/singularity/.../institute> \
+nextflow run . \
+   -profile local,conda \
    --input samplesheet.csv \
    --outdir <OUTDIR> \
    --classifier_name pallas \
