@@ -36,6 +36,9 @@ def resolveClassifierConfigFile(manifest, configDir, key) {
 
 def resolveClassifierConfig() {
     if (!params.classifier_name && !params.classifier_version) {
+        if (params.inference) {
+            error("Inference requires --classifier-name and --classifier-version.")
+        }
         return [
             genome: params.genome,
             annotation_version: params.annotation_version ?: 109,
@@ -44,6 +47,10 @@ def resolveClassifierConfig() {
             dnam_probes_file: params.dnam_probes_file,
             dnam_classes_file: params.dnam_classes_file,
             class_colors_file: params.class_colors_file,
+            gex_model_file: null,
+            dnam_model_file: null,
+            gex_calibration_file: null,
+            dnam_calibration_file: null,
         ]
     }
 
@@ -89,6 +96,10 @@ def resolveClassifierConfig() {
         dnam_probes_file: params.dnam_probes_file,
         dnam_classes_file: params.dnam_classes_file,
         class_colors_file: params.class_colors_file,
+        gex_model_file: params.gex_model_file,
+        dnam_model_file: params.dnam_model_file,
+        gex_calibration_file: params.gex_calibration_file,
+        dnam_calibration_file: params.dnam_calibration_file,
     ]
     if (!resolved.gex_genes_file) {
         resolved.gex_genes_file = resolveClassifierConfigFile(manifest, configDir, 'gex_genes_file')
@@ -104,6 +115,18 @@ def resolveClassifierConfig() {
     }
     if (!resolved.class_colors_file) {
         resolved.class_colors_file = resolveClassifierConfigFile(manifest, configDir, 'class_colors_file')
+    }
+    if (params.inference && !resolved.gex_model_file) {
+        resolved.gex_model_file = resolveClassifierConfigFile(manifest, configDir, 'gex_model_file')
+    }
+    if (params.inference && !resolved.dnam_model_file) {
+        resolved.dnam_model_file = resolveClassifierConfigFile(manifest, configDir, 'dnam_model_file')
+    }
+    if (params.inference && !resolved.gex_calibration_file) {
+        resolved.gex_calibration_file = resolveClassifierConfigFile(manifest, configDir, 'gex_calibration_file')
+    }
+    if (params.inference && !resolved.dnam_calibration_file) {
+        resolved.dnam_calibration_file = resolveClassifierConfigFile(manifest, configDir, 'dnam_calibration_file')
     }
     log.info("Using classifier configuration ${classifierName} ${classifierVersion} (annotation_version=${resolved.annotation_version})")
     return resolved
@@ -373,6 +396,9 @@ workflow PIPELINE_COMPLETION {
 //
 def validateInputParameters() {
     genomeExistsError()
+    if (params.inference && (params.alpha == null || (params.alpha as BigDecimal) <= 0 || (params.alpha as BigDecimal) >= 1)) {
+        error("Parameter '--alpha' must be greater than 0 and less than 1.")
+    }
 }
 
 //

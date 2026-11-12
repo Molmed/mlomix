@@ -4,6 +4,11 @@
 
 This document describes the output produced by the pipeline. Most of the plots are taken from the MultiQC report, which summarises results at the end of the pipeline.
 
+When `--inference` is enabled, `predictions.gex.csv` and/or `predictions.dnam.csv`
+are produced alongside the pre-processed feature matrices. Each file contains
+`id` and `predicted_label`; multiple labels in a conformal prediction set are
+semicolon-separated. The set is calibrated using `--alpha` (default `0.05`).
+
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
 <!-- TODO nf-core: Write this documentation describing your workflow's output -->

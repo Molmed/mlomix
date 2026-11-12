@@ -11,3 +11,7 @@ gex_norm_factors_file: norm_factors.gex.rds
 dnam_classes_file: class_names.dnam.txt
 dnam_probes_file: selected_features.dnam.txt
 class_colors_file: class_colors.tsv
+gex_model_file: model.gex.joblib
+dnam_model_file: model.dnam.joblib
+gex_calibration_file: calibration.predictions.gex.csv
+dnam_calibration_file: calibration.predictions.dnam.csv

@@ -120,6 +120,44 @@
                     "fa_icon": "far fa-folder-open",
                     "hidden": true
                 },
+                "inference": {
+                    "type": ["boolean", "string"],
+                    "default": false,
+                    "description": "Run conformal prediction inference using the selected classifier configuration.",
+                    "fa_icon": "fas fa-brain"
+                },
+                "alpha": {
+                    "type": "number",
+                    "default": 0.05,
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Conformal prediction error rate.",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "gex_model_file": {
+                    "type": ["string", "null"],
+                    "format": "file-path",
+                    "hidden": true,
+                    "default": null
+                },
+                "dnam_model_file": {
+                    "type": ["string", "null"],
+                    "format": "file-path",
+                    "hidden": true,
+                    "default": null
+                },
+                "gex_calibration_file": {
+                    "type": ["string", "null"],
+                    "format": "file-path",
+                    "hidden": true,
+                    "default": null
+                },
+                "dnam_calibration_file": {
+                    "type": ["string", "null"],
+                    "format": "file-path",
+                    "hidden": true,
+                    "default": null
+                },
                 "annotation_version": {
                     "type": ["integer", "string", "null"],
                     "default": null,

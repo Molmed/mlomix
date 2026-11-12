@@ -31,6 +31,8 @@ include { resolveClassifierConfig } from './subworkflows/local/utils_nfcore_mlom
 params.fasta = getGenomeAttribute('fasta')
 params.tsne = params.tsne ?: true
 params.gex_norm_factors_file = params.gex_norm_factors_file ?: null
+params.inference = params.inference.toString().toBoolean()
+params.alpha = params.alpha as BigDecimal
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,6 +65,8 @@ workflow NFCORE_MLOMIX {
     run_gex
     run_dnam
     use_precomputed_dnam
+    inference
+    alpha
 
     main:
 
@@ -88,7 +92,9 @@ workflow NFCORE_MLOMIX {
         random_seed,
         run_gex,
         run_dnam,
-        use_precomputed_dnam
+        use_precomputed_dnam,
+        inference,
+        alpha
     )
     emit:
     versions = MLOMIX.out.versions
@@ -97,6 +103,7 @@ workflow NFCORE_MLOMIX {
     samplesheet_filtered_csv = MLOMIX.out.samplesheet_filtered_csv
     class_distribution_gex_filtered_svg = MLOMIX.out.class_distribution_gex_filtered_svg
     class_distribution_dnam_filtered_svg = MLOMIX.out.class_distribution_dnam_filtered_svg
+    predictions = MLOMIX.out.predictions
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -152,7 +159,9 @@ workflow {
         params.random_seed,
         PIPELINE_INITIALISATION.out.run_gex,
         PIPELINE_INITIALISATION.out.run_dnam,
-        PIPELINE_INITIALISATION.out.use_precomputed_dnam
+        PIPELINE_INITIALISATION.out.use_precomputed_dnam,
+        params.inference,
+        params.alpha
     )
     //
     // SUBWORKFLOW: Run completion tasks

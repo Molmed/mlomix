@@ -58,6 +58,10 @@ nextflow run . \
    --classifier_version 1.0.0
 ```
 
+Add `--inference` to run the bundled GEX and/or DNAm models and produce conformal
+prediction sets. The error-rate parameter can be changed with `--alpha` (default
+`0.05`).
+
 <!--
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 

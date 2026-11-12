@@ -17,6 +17,7 @@ process FINALIZE {
     path gex_classes_filtered
     path dnam_classes_filtered
     path samplesheet_filtered_csv
+    path prediction_files
 
     output:
     path "labels.csv", emit: labels_csv
@@ -31,6 +32,7 @@ process FINALIZE {
     path "classes.dnam.filtered.tsv", emit: classes_dnam_filtered
     path "samplesheet.filtered.csv", emit: samplesheet_filtered_csv
     path "visuals", emit: visuals_dir
+    path "predictions.*.csv", optional: true, emit: predictions
     path "class_names.gex.txt", emit: class_names_gex
     path "class_names.dnam.txt", emit: class_names_dnam
     path "versions.yml", emit: versions
@@ -41,6 +43,10 @@ process FINALIZE {
     script:
     def visual_file_names = (visual_files instanceof List ? visual_files : [visual_files])
         .collect { visual_file -> "\"${visual_file.name}\"" }
+        .join(', ')
+    def prediction_file_names = (prediction_files instanceof List ? prediction_files : [prediction_files])
+        .findAll { prediction_file -> prediction_file != null }
+        .collect { prediction_file -> "\"${prediction_file.name}\"" }
         .join(', ')
 """
 #!/usr/bin/env python3
@@ -191,6 +197,12 @@ try:
 except Exception:
     open('class_names.dnam.txt', 'w').close()
 os.makedirs("visuals", exist_ok=True)
+for prediction_path in [${prediction_file_names}]:
+    if os.path.exists(prediction_path):
+        destination = os.path.basename(prediction_path)
+        if os.path.abspath(prediction_path) != os.path.abspath(destination):
+            shutil.copy2(prediction_path, destination)
+
 visual_inputs = [${visual_file_names}]
 for visual_path in visual_inputs:
     if not visual_path.lower().endswith((".png", ".svg")):

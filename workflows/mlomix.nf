@@ -7,6 +7,8 @@ include { GEX_REF_PREPROCESSOR } from './gex_ref_preprocessor'
 include { GEX } from './gex'
 include { DNAM } from './dnam'
 include { FINALIZE } from '../modules/local/finalize/finalize'
+include { INFERENCE as INFERENCE_GEX } from '../modules/local/inference/inference'
+include { INFERENCE as INFERENCE_DNAM } from '../modules/local/inference/inference'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,13 +38,17 @@ workflow MLOMIX {
     run_gex
     run_dnam
     use_precomputed_dnam
+    inference
+    alpha
 
     main:
 
     ch_versions = channel.empty()
     ch_gex_transposed = channel.empty()
+    ch_gex_transposed_raw = channel.empty()
     ch_gex_norm_factors = channel.empty()
     ch_dnam_transposed = channel.empty()
+    ch_dnam_transposed_raw = channel.empty()
     ch_classes_tsv = channel.empty()
     ch_visuals = channel.empty()
 
@@ -99,7 +105,8 @@ workflow MLOMIX {
 
     ch_versions = ch_versions.mix(GEX_REF_PREPROCESSOR.out.versions)
     ch_versions = ch_versions.mix(GEX.out.versions)
-    ch_gex_transposed = GEX.out.transposed_csv
+    ch_gex_transposed_raw = GEX.out.transposed_csv
+    ch_gex_transposed = ch_gex_transposed_raw
     ch_gex_norm_factors = GEX.out.norm_factors_rds
     ch_classes_tsv = ch_classes
     ch_visuals = ch_visuals.mix(GEX.out.visuals)
@@ -123,10 +130,44 @@ workflow MLOMIX {
         classifier_config.class_colors_file ?: ''
     )
     ch_versions = ch_versions.mix(DNAM.out.versions)
-    ch_dnam_transposed = DNAM.out.transposed_csv.ifEmpty(file("${params.outdir}/.dnam_placeholder"))
+    ch_dnam_transposed_raw = DNAM.out.transposed_csv
+    ch_dnam_transposed = ch_dnam_transposed_raw.ifEmpty(file("${params.outdir}/.dnam_placeholder"))
     ch_gex_transposed = ch_gex_transposed.ifEmpty(file("${params.outdir}/.gex_placeholder"))
     ch_gex_norm_factors = ch_gex_norm_factors.ifEmpty(file("${params.outdir}/.gex_norm_factors_placeholder"))
     ch_visuals = ch_visuals.mix(DNAM.out.visuals)
+
+    ch_inference_predictions = channel.empty()
+    if (inference) {
+        ch_gex_inference = ch_gex_transposed_raw
+            .combine(run_gex)
+            .filter { item -> item[-1] }
+            .map { item -> item[0] }
+        ch_dnam_inference = ch_dnam_transposed_raw
+            .combine(run_dnam)
+            .filter { item -> item[-1] }
+            .map { item -> item[0] }
+
+        INFERENCE_GEX (
+                ch_gex_inference,
+                classifier_config.gex_model_file,
+                classifier_config.gex_calibration_file,
+                'gex',
+                alpha
+        )
+        ch_versions = ch_versions.mix(INFERENCE_GEX.out.versions)
+        ch_inference_predictions = ch_inference_predictions.mix(INFERENCE_GEX.out.predictions)
+
+        INFERENCE_DNAM (
+                ch_dnam_inference,
+                classifier_config.dnam_model_file,
+                classifier_config.dnam_calibration_file,
+                'dnam',
+                alpha
+        )
+        ch_versions = ch_versions.mix(INFERENCE_DNAM.out.versions)
+        ch_inference_predictions = ch_inference_predictions.mix(INFERENCE_DNAM.out.predictions)
+    }
+    ch_predictions = ch_inference_predictions.collect()
 
     FINALIZE (
         ch_classes_tsv,
@@ -138,7 +179,8 @@ workflow MLOMIX {
         ch_class_plot_dnam_filtered,
         ch_classes_gex_filtered,
         ch_classes_dnam_filtered,
-        ch_samplesheet_filtered_csv
+        ch_samplesheet_filtered_csv,
+        ch_predictions
     )
     ch_versions = ch_versions.mix(FINALIZE.out.versions)
 
@@ -154,6 +196,7 @@ workflow MLOMIX {
     class_distribution_gex_filtered_svg = FINALIZE.out.class_distribution_gex_filtered_svg
     class_distribution_dnam_filtered_svg = FINALIZE.out.class_distribution_dnam_filtered_svg
     visuals_dir = FINALIZE.out.visuals_dir
+    predictions = FINALIZE.out.predictions
 
 }
 
