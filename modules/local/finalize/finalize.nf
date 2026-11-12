@@ -1,5 +1,7 @@
 process FINALIZE {
     label 'process_high'
+    publishDir "${params.outdir}/finalize", mode: params.publish_dir_mode,
+        saveAs: { filename -> filename.equals('versions.yml') ? null : filename }
 
     conda "conda-forge::pandas=2.2.3"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -200,7 +202,11 @@ os.makedirs("visuals", exist_ok=True)
 for prediction_path in [${prediction_file_names}]:
     if os.path.exists(prediction_path):
         destination = os.path.basename(prediction_path)
-        if os.path.abspath(prediction_path) != os.path.abspath(destination):
+        if os.path.islink(destination):
+            temporary_destination = destination + ".tmp"
+            shutil.copy2(prediction_path, temporary_destination)
+            os.replace(temporary_destination, destination)
+        elif os.path.abspath(prediction_path) != os.path.abspath(destination):
             shutil.copy2(prediction_path, destination)
 
 visual_inputs = [${visual_file_names}]

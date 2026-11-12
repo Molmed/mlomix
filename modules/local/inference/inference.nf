@@ -1,5 +1,7 @@
 process INFERENCE {
     label 'process_single'
+    publishDir "${params.outdir}/finalize", mode: params.publish_dir_mode,
+        saveAs: { filename -> filename.equals('versions.yml') ? null : filename }
 
     conda "${moduleDir}/environment.yml"
 
