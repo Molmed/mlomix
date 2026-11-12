@@ -8,6 +8,10 @@ When `--inference` is enabled, `predictions.gex.csv` and/or `predictions.dnam.cs
 are produced alongside the pre-processed feature matrices. Each file contains
 `id` and `predicted_label`; multiple labels in a conformal prediction set are
 semicolon-separated. The set is calibrated using `--alpha` (default `0.05`).
+The corresponding `prediction_sets.gex.upset.png` and/or
+`prediction_sets.dnam.upset.png` plots show prediction-set membership.
+Interactive `prediction_sets.gex.sankey.html` and/or
+`prediction_sets.dnam.sankey.html` plots show true-label to prediction-set flows.
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 

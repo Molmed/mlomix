@@ -104,6 +104,8 @@ workflow NFCORE_MLOMIX {
     class_distribution_gex_filtered_svg = MLOMIX.out.class_distribution_gex_filtered_svg
     class_distribution_dnam_filtered_svg = MLOMIX.out.class_distribution_dnam_filtered_svg
     predictions = MLOMIX.out.predictions
+    prediction_upset_plots = MLOMIX.out.prediction_upset_plots
+    prediction_sankey_plots = MLOMIX.out.prediction_sankey_plots
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -9,6 +9,8 @@ include { DNAM } from './dnam'
 include { FINALIZE } from '../modules/local/finalize/finalize'
 include { INFERENCE as INFERENCE_GEX } from '../modules/local/inference/inference'
 include { INFERENCE as INFERENCE_DNAM } from '../modules/local/inference/inference'
+include { PREDICTION_REPORT as PREDICTION_REPORT_GEX } from '../modules/local/prediction_report/prediction_report'
+include { PREDICTION_REPORT as PREDICTION_REPORT_DNAM } from '../modules/local/prediction_report/prediction_report'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -137,6 +139,9 @@ workflow MLOMIX {
     ch_visuals = ch_visuals.mix(DNAM.out.visuals)
 
     ch_inference_predictions = channel.empty()
+    ch_prediction_plot_versions = channel.empty()
+    ch_prediction_upset_plots = channel.empty()
+    ch_prediction_sankey_plots = channel.empty()
     if (inference) {
         ch_gex_inference = ch_gex_transposed_raw
             .combine(run_gex)
@@ -166,7 +171,28 @@ workflow MLOMIX {
         )
         ch_versions = ch_versions.mix(INFERENCE_DNAM.out.versions)
         ch_inference_predictions = ch_inference_predictions.mix(INFERENCE_DNAM.out.predictions)
+
+        PREDICTION_REPORT_GEX (
+            INFERENCE_GEX.out.predictions,
+            ch_classes_tsv,
+            classifier_config.class_colors_file,
+            'gex'
+        )
+        ch_prediction_plot_versions = ch_prediction_plot_versions.mix(PREDICTION_REPORT_GEX.out.versions)
+        ch_prediction_upset_plots = ch_prediction_upset_plots.mix(PREDICTION_REPORT_GEX.out.upset_plot)
+        ch_prediction_sankey_plots = ch_prediction_sankey_plots.mix(PREDICTION_REPORT_GEX.out.sankey_plot)
+
+        PREDICTION_REPORT_DNAM (
+            INFERENCE_DNAM.out.predictions,
+            ch_classes_tsv,
+            classifier_config.class_colors_file,
+            'dnam'
+        )
+        ch_prediction_plot_versions = ch_prediction_plot_versions.mix(PREDICTION_REPORT_DNAM.out.versions)
+        ch_prediction_upset_plots = ch_prediction_upset_plots.mix(PREDICTION_REPORT_DNAM.out.upset_plot)
+        ch_prediction_sankey_plots = ch_prediction_sankey_plots.mix(PREDICTION_REPORT_DNAM.out.sankey_plot)
     }
+    ch_versions = ch_versions.mix(ch_prediction_plot_versions)
     ch_predictions = ch_inference_predictions.collect()
 
     FINALIZE (
@@ -197,6 +223,8 @@ workflow MLOMIX {
     class_distribution_dnam_filtered_svg = FINALIZE.out.class_distribution_dnam_filtered_svg
     visuals_dir = FINALIZE.out.visuals_dir
     predictions = FINALIZE.out.predictions
+    prediction_upset_plots = ch_prediction_upset_plots
+    prediction_sankey_plots = ch_prediction_sankey_plots
 
 }
 
